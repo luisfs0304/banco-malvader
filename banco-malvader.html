@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Banco Malvader</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <img src="https://img.icons8.com/external-flatart-icons-flat-flatarticons/64/ffffff/external-bank-building-financial-technology-flatart-icons-flat-flatarticons.png" alt="Logo Banco Malvader">
+      <h1>Banco Malvader</h1>
+    </div>
+  </header>
+
+  <div class="container">
+    <h2 id="userName">Olá, Usuário!</h2>
+    <p class="highlight">Saldo da Conta Corrente: <strong id="userBalance" style="color:red;">R$ 0,00</strong></p>
+
+    <div class="dashboard">
+      <div class="card">
+        <h2>Últimas Transações</h2>
+        <ul class="transactions" id="transactionList">
+          <li>Carregando...</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2>Informações da Conta</h2>
+        <p><strong>Tipo:</strong> <span id="tipoConta"></span></p>
+        <p><strong>Agência:</strong> <span id="agencia"></span></p>
+        <p><strong>Conta:</strong> <span id="numeroConta"></span></p>
+        <p><strong>Status:</strong> <span id="statusConta"></span></p>
+        <p><strong>Limite:</strong> R$ <span id="limiteConta"></span></p>
+        <p><strong>Vencimento:</strong> <span id="vencimento"></span></p>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="button" onclick="realizarDeposito()">Depositar</button>
+      <button class="button" onclick="realizarTransferencia()">Transferir</button>
+      <button class="button" onclick="logout()">Sair</button>
+    </div>
+  </div>
+
+  <script>
+    async function carregarDados() {
+      try {
+        const response = await fetch('http://localhost:8080/api/conta/137');
+        const data = await response.json();
+
+        document.getElementById('userName').innerText = `Olá, ${data.nomeCliente}!`;
+        document.getElementById('userBalance').innerText = `R$ ${data.saldo.toFixed(2)}`;
+        document.getElementById('tipoConta').innerText = data.tipo;
+        document.getElementById('agencia').innerText = data.agencia;
+        document.getElementById('numeroConta').innerText = data.numero;
+        document.getElementById('statusConta').innerText = data.status;
+        document.getElementById('limiteConta').innerText = data.limite.toFixed(2);
+        document.getElementById('vencimento').innerText = data.vencimento;
+
+        const transacoes = data.transacoes.map(t =>
+          `<li><span>${t.descricao}</span><span style="color: ${t.valor < 0 ? 'red' : 'green'};">${t.valor < 0 ? '-' : '+'} R$ ${Math.abs(t.valor).toFixed(2)}</span></li>`
+        ).join('');
+        document.getElementById('transactionList').innerHTML = transacoes;
+      } catch (error) {
+        alert('Erro ao carregar dados da conta. Verifique o back-end.');
+      }
+    }
+
+    function realizarDeposito() {
+      alert('Função de depósito ainda não implementada');
+    }
+
+    function realizarTransferencia() {
+      alert('Função de transferência ainda não implementada');
+    }
+
+    function logout() {
+      alert('Sessão encerrada');
+      window.location.href = '/login.html';
+    }
+
+    window.onload = carregarDados;
+  </script>
+</body>
+</html>
